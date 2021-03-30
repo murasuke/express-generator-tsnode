@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('express-generator-tsnode:server');
-var http = require('http');
+import app from '../app';
+import debug from 'debug';
+import http from 'http';
+debug('express-generator-tsnode:server');
 
 /**
  * Get port from environment and store in Express.
@@ -33,7 +34,7 @@ server.on('listening', onListening);
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
+function normalizePort(val: string) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -82,7 +83,7 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
+  var addr = server.address() || '';
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;

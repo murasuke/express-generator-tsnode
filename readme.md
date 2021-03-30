@@ -42,6 +42,8 @@ npm i -D typescript nodemon ts-node @types/cookie-parser @types/express @types/m
 npx tsc --init
 ```
 
+
+
 ## 2部 拡張子の変更 ＋ おまじない(www.jsでts-nodeを使い、tsファイルをロードする)
 
 この章がメインです。
@@ -72,4 +74,100 @@ require('./www.ts');
 * これでtypescript化したexpressアプリケーションが動作します。
 ```bash
 npm run start
+```
+
+* ファイル変更時にリコンパイル＆再起動を行うため、package.jsonに「dev」を追加します。
+```json
+  "scripts": {
+    "start": "node ./bin/www",
+    "dev": "nodemon --ext js,ts ./bin/www"
+  },
+```
+
+これでファイル変更時にリロードされるようになります。
+```bash
+npm run dev
+```
+
+## 3部 requireをimportに変えて型定義の恩恵にあずかる
+
+2章まで目的のts化は果たしていますが、require()で読み込んだモジュールはany扱いとなり
+typescriptの恩恵にあずかれないため、importに書き換えます。
+
+exportの書き換えも必要ですが、元のmodule.exportに加えて、export defaultを追加することで読み込み側は変更を強制されなくなります。
+```typescript
+// importでもrequire()でも読み込めるように2種類export
+module.exports = app;
+export default app;
+```
+
+### 変更前(app.ts)
+
+```typescript
+var express = require('express');
+var path = require('path');
+var cookieParser = require('cookie-parser');
+var logger = require('morgan');
+
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+
+var app = express();
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+module.exports = app;
+```
+
+
+
+### 変更後(app.ts)
+```typescript
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+
+// module.exportsとexport default両方使っているので
+// 読み込み側はimportでもrequire()でも使えます
+// ちょっとずつ変更していくためには便利です
+var indexRouter = require('./routes/index');
+import usersRouter from './routes/users';
+
+var app = express();
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+
+// importでもrequire()でも読み込めるように2種類export
+module.exports = app;
+export default app;
+```
+
+### 変更後(index.ts)
+```typescript
+import express from 'express';
+var router = express.Router();
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Express' });
+});
+
+// importでもrequire()でも読み込めるように2種類export
+module.exports = router;
+export default router;
 ```
