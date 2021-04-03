@@ -89,6 +89,9 @@ npm run start
 npm run dev
 ```
 
+* ここまでのソース
+https://github.com/murasuke/express-generator-tsnode/tree/chapter2
+
 ## 3部 requireをimportに変えて型定義の恩恵にあずかる
 
 2章まで目的のts化は果たしていますが、require()で読み込んだモジュールはany扱いとなり
@@ -171,3 +174,5 @@ router.get('/', function(req, res, next) {
 module.exports = router;
 export default router;
 ```
+* ここまでのソース
+https://github.com/murasuke/express-generator-tsnode/tree/chapter2
