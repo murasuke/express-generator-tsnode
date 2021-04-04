@@ -5,6 +5,7 @@ import logger from 'morgan';
 
 var indexRouter = require('./routes/index');
 import usersRouter from './routes/users';
+import weatherRouter from './routes/weather';
 
 var app = express();
 
@@ -16,6 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/weather', weatherRouter);
 
 // importでもrequire()でも読み込めるように2種類export
 module.exports = app;
