@@ -175,4 +175,51 @@ module.exports = router;
 export default router;
 ```
 * ここまでのソース
-https://github.com/murasuke/express-generator-tsnode/tree/chapter2
+https://github.com/murasuke/express-generator-tsnode/tree/chapter3
+
+
+## 4部 launch.jsonにデバッグ用の設定を追加する(jestのデバッグ)
+
+```json
+{
+  // require('ts-node').register() を使う場合のデバッグ設定
+  "version": "0.2.0",
+  "configurations": [    
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch node Program",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "program": "${workspaceFolder}\\bin\\www",
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "type": "pwa-node",
+      "request": "attach",
+      "name": "Attach node program",
+      "processId": "${command:PickProcess}",      
+    },
+    {
+      "name": "Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/jest/bin/jest.js",
+        "--runInBand"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "port": 9229
+    }
+  ]
+}
+```
